@@ -1,0 +1,66 @@
+/**
+ * BasicHTTPClient.ino
+ *
+ *  Created on: 24.05.2015
+ *
+ */
+
+#include <Arduino.h>
+
+#include <ESP8266WiFi.h>
+#include <ESP8266WiFiMulti.h>
+
+#include <ESP8266HTTPClient.h>
+
+ESP8266WiFiMulti WiFiMulti;
+
+void setup() {
+
+    Serial.begin(115200);
+
+    WiFiMulti.addAP("SSID", "PASSWORD");
+
+    Serial.println("Setup done.");
+}
+
+void loop() {
+  
+    // wait for WiFi connection
+    if((WiFiMulti.run() == WL_CONNECTED)) {
+
+        HTTPClient http;
+
+        Serial.println("Wifi connected.");
+        
+        http.begin("http://connected-outlet.glitch.me/anything");
+
+        Serial.println("Sending GET request.");
+        
+        // start connection and send HTTP header
+        int httpCode = http.GET();
+
+        // httpCode will be negative on error
+        if(httpCode > 0) {
+          
+            // HTTP header has been send and Server response header has been handled
+            Serial.printf("Response code: %d\n", httpCode);
+
+            // file found at server
+            if(httpCode == HTTP_CODE_OK) {
+                String payload = http.getString();
+                Serial.println(payload);
+            }
+        } else {
+            Serial.printf("Error: %s\n", http.errorToString(httpCode).c_str());
+        }
+
+        http.end();
+    } else {
+
+        Serial.println("Not connected to wifi yet.");
+    }
+
+    Serial.println("Cycle.");
+    delay(10000);
+}
+
