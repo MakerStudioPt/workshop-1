@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Outlet</string>
+    <string name="onButton">On</string>
+    <string name="offButton">Off</string>
+</resources>
